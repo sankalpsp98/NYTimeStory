@@ -3,11 +3,11 @@ package com.sankalp.nytimestory;
 public class results {
 
 
-    private static String section;
-    private  static  String title;
-    private  static  String abstrac;
-    private  static  String url;
-    private  static  String byline;
+    private  String section;
+    private    String title;
+    private    String abstrac;
+    private    String url;
+    private    String byline;
 
 
     public results(String section, String title, String abstrac, String url, String byline) {
@@ -19,23 +19,23 @@ public class results {
 
     }
 
-    public static String getSection() {
+    public String getSection() {
         return section;
     }
 
-    public static String getTitle() {
+    public  String getTitle() {
         return title;
     }
 
-    public static String getAbstrac() {
+    public  String getAbstrac() {
         return abstrac;
     }
 
-    public static String getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    public static String getByline() {
+    public String getByline() {
         return byline;
     }
 
