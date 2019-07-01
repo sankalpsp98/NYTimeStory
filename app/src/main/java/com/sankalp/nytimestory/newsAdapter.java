@@ -13,7 +13,7 @@ import java.util.List;
 
 public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
 
-    private List<results> NewsList;
+    private List<results> NewsList ;
     Context context;
 
     public newsAdapter(List<results> NewsList, Context context) {
@@ -26,6 +26,7 @@ public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.news_list,viewGroup,false);
 
+
         return  new ViewHolder(view);
     }
 
@@ -35,6 +36,7 @@ public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
         holder.title.setText(results.getTitle());
         holder.abstrac.setText(results.getAbstrac());
         holder.by.setText(results.getByline());
+
 
     }
 

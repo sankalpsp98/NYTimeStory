@@ -1,8 +1,12 @@
 package com.sankalp.nytimestory;
 
+import android.arch.lifecycle.Observer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +21,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +37,45 @@ public class MainActivity extends AppCompatActivity
     private  RecyclerView.Adapter adapter;
     List<results> resultsList;
     results results = null;
+    String url = "";
+
+    SwipeRefreshLayout swipeContainer;
+    dataWire dataWire = new dataWire();
+    OneTimeWorkRequest oneTimeWorkRequest1;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
+
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeContainer.setRefreshing(false);
+                        adapter.notifyDataSetChanged();
+                    }
+                },4000);
+            }
+        });
+
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.hasFixedSize();
@@ -48,9 +89,25 @@ int a=0;
             resultsList.add(results);
         }
 
+
+
         adapter = new newsAdapter(resultsList,getApplicationContext());
 
         recyclerView.setAdapter(adapter);
+        WorkManager.getInstance().getStatusById(oneTimeWorkRequest1.getId()).observe(this, new Observer<WorkStatus>() {
+            @Override
+            public void onChanged(@Nullable WorkStatus listLiveData) {
+                if (listLiveData != null && listLiveData.getState().isFinished()) {
+                    Log.e("works Status ", "finished");
+                    resultsList.clear();
+                    results =null;
+                    resultsList =dataWire.getResultsDataWire();
+                    adapter.notifyDataSetChanged();
+
+                    swipeContainer.setRefreshing(false);
+                }
+            }
+        });
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -59,6 +116,10 @@ int a=0;
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+
+                adapter.notifyDataSetChanged();
+
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -125,5 +186,11 @@ int a=0;
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 }
