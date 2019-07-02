@@ -23,7 +23,7 @@ import okhttp3.Response;
 
 public class workManager extends Worker {
 
-    String url =  "https://api.nytimes.com/svc/topstories/v2/science.json";
+    String url =  "https://api.nytimes.com/svc/topstories/v2/sports.json";
        private static final String TAG = "MyPeriodicWork";
        results results=null;
 
@@ -102,6 +102,13 @@ public class workManager extends Worker {
 
 
                   Log.e(TAG, "doWork: Work is done.  "+resultsList.size());
-        return Result.SUCCESS;
+                  if (dataWire.getResultsDataWire().size()!=0)
+                  {
+                      return Result.SUCCESS;
+                  }else
+                  {
+                      return Result.FAILURE;
+                  }
+
     }
 }

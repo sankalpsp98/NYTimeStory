@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         if (dataWire.getResultsDataWire().size()==0) {
 
             swipeContainer.setRefreshing(true);
-                    WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+                    //WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
 
         }else
         {
