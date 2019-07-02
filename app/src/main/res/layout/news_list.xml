@@ -11,6 +11,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="20dp"
+        android:id="@+id/card1"
         android:elevation="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,7 +29,7 @@
             <ImageView
                 android:id="@+id/imageView2"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="170dp"
 
                 android:src="@drawable/pic" />
 
@@ -38,6 +39,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="top|left"
                 android:text="TextView"
+
 
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20dp"

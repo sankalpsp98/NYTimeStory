@@ -35,7 +35,7 @@ public class spalshScreen extends AppCompatActivity {
                             oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
                             startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         }
-                    },2100);
+                    },2500);
 
                 }
 
