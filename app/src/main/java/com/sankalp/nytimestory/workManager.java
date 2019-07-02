@@ -64,11 +64,11 @@ public class workManager extends Worker {
 
                             JSONObject o = resultsA.getJSONObject(i);
 
-                            String section =o.getString("section");
-                            String title =o.getString("title");
-                            String abstrac =o.getString("abstract");
-                            String url=o.getString("url");
-                            String by =o.getString("byline");
+                            String section = String.valueOf(o.get("section"));
+                            String title = String.valueOf(o.get("title"));
+                            String abstrac = String.valueOf(o.get("abstract"));
+                            String url= String.valueOf(o.get("url"));
+                            String by = String.valueOf(o.get("byline"));
                             results = new results(section,title,abstrac,url,by) ;
                             resultsList.add(results);
 
