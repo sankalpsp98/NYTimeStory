@@ -25,8 +25,20 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkStatus;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,13 +48,13 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView recyclerView ;
     private  RecyclerView.Adapter adapter;
     List<results> resultsList;
-    results results = null;
-    String url = "";
-
+    results results;
+    String url =  "https://api.nytimes.com/svc/topstories/v2/science.json";
+    private static final String TAG = "MyPeriodicWork";
     SwipeRefreshLayout swipeContainer;
     dataWire dataWire = new dataWire();
     OneTimeWorkRequest oneTimeWorkRequest1;
-
+    int a=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +70,15 @@ public class MainActivity extends AppCompatActivity
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        swipeContainer.setRefreshing(true);
 
 
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
 
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeContainer.setRefreshing(false);
-                        adapter.notifyDataSetChanged();
-                    }
-                },4000);
+
             }
         });
 
@@ -81,28 +87,44 @@ public class MainActivity extends AppCompatActivity
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         resultsList = new ArrayList<>();
-int a=0;
-        for (int i = 0; i < 4; i++) {
+        WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
+     /*   for (int i = 0; i < 4; i++) {
             a++;
             results = new results("hello heding", "abtract" +a, "hjsajbsjhbjsvascas", "dsdsd", "wddbjkdnjsk");
             Log.e("num",""+(i+1));
             resultsList.add(results);
-        }
+        }*/
 
 
 
-        adapter = new newsAdapter(resultsList,getApplicationContext());
 
-        recyclerView.setAdapter(adapter);
+
         WorkManager.getInstance().getStatusById(oneTimeWorkRequest1.getId()).observe(this, new Observer<WorkStatus>() {
             @Override
             public void onChanged(@Nullable WorkStatus listLiveData) {
                 if (listLiveData != null && listLiveData.getState().isFinished()) {
-                    Log.e("works Status ", "finished");
-                    resultsList.clear();
-                    results =null;
-                    resultsList =dataWire.getResultsDataWire();
-                    adapter.notifyDataSetChanged();
+                    try {
+                        Thread.sleep(1000);
+                        resultsList=dataWire.getResultsDataWire();
+                        Log.e("works Status ", "finished"+resultsList.size());
+
+                        adapter = new newsAdapter(resultsList,getApplicationContext());
+                    }catch (Exception e) {
+                    }
+
+                    swipeContainer.setRefreshing(false);
+
+                    swipeContainer.setRefreshing(false);
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+
+                            // Stuff that updates the UI
+                            recyclerView.setAdapter(adapter);
+                        }
+                    });
 
                     swipeContainer.setRefreshing(false);
                 }
