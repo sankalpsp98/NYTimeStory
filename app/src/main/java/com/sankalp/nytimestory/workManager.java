@@ -69,7 +69,12 @@ public class workManager extends Worker {
                             String abstrac = String.valueOf(o.get("abstract"));
                             String url= String.valueOf(o.get("url"));
                             String by = String.valueOf(o.get("byline"));
-                            results = new results(section,title,abstrac,url,by) ;
+                            //FOR IMG
+                            JSONArray mURLs =o.getJSONArray("multimedia");
+                            JSONObject imgURL =mURLs.getJSONObject(4);
+                            String urlLINK = String.valueOf(imgURL.get("url"));
+
+                            results = new results(section,title,abstrac,url,by,urlLINK) ;
                             resultsList.add(results);
 
 

@@ -8,17 +8,22 @@ public class results {
     private    String abstrac;
     private    String url;
     private    String byline;
+    private    String murl;
 
 
-    public results(String section, String title, String abstrac, String url, String byline) {
+    public results(String section, String title, String abstrac, String url, String byline, String murl) {
         this.section = section;
         this.title = title;
         this.abstrac =abstrac;
         this.url= url;
         this.byline=byline;
+        this.murl =murl;
 
     }
 
+    public String getMurl() {
+        return murl;
+    }
     public String getSection() {
         return section;
     }

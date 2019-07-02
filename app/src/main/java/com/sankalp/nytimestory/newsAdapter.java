@@ -7,7 +7,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -37,6 +40,8 @@ public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
         holder.abstrac.setText(results.getAbstrac());
         holder.by.setText(results.getByline());
 
+        Picasso.with(context).load(results.getMurl()).placeholder(R.mipmap.ic_launcher).fit().centerCrop().into(holder.storyPic);
+
 
     }
 
@@ -50,12 +55,14 @@ public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
         TextView title;
         TextView abstrac;
         TextView by;
+        ImageView storyPic;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.textView2);
             abstrac= itemView.findViewById(R.id.textView3);
             by=itemView.findViewById(R.id.textView4);
+            storyPic = itemView.findViewById(R.id.imageView2);
         }
     }
 }
