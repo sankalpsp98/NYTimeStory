@@ -63,14 +63,48 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
-
-
+        recyclerView = findViewById(R.id.recycler);
+        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        resultsList = new ArrayList<>();
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        swipeContainer.setRefreshing(true);
+
+        if (dataWire.getResultsDataWire().size()==0) {
+            swipeContainer.setRefreshing(true);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+
+                    WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
+                }
+            }, 10);
+        }else
+        {
+            resultsList=dataWire.getResultsDataWire();
+
+            Log.e("works Status ", "finished"+resultsList.size());
+            adapter = new newsAdapter(resultsList,getApplicationContext());
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    // Stuff that updates the UI
+
+                    recyclerView.setAdapter(adapter);
+                }
+            });
+
+
+        }
+
+
 
 
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -78,16 +112,25 @@ public class MainActivity extends AppCompatActivity
             public void onRefresh() {
 
 
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter!=null)
+                        {
+                            adapter.notifyDataSetChanged();
+                            swipeContainer.setRefreshing(false);
+                        }else {
+                            WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+                        }
+                    }
+                },2000);
 
             }
         });
 
 
-        recyclerView = findViewById(R.id.recycler);
-        recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        resultsList = new ArrayList<>();
-        WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
+
 
      /*   for (int i = 0; i < 4; i++) {
             a++;
@@ -105,28 +148,30 @@ public class MainActivity extends AppCompatActivity
             public void onChanged(@Nullable WorkStatus listLiveData) {
                 if (listLiveData != null && listLiveData.getState().isFinished()) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(4000);
                         resultsList=dataWire.getResultsDataWire();
-                        Log.e("works Status ", "finished"+resultsList.size());
 
+                        Log.e("works Status ", "finished"+resultsList.size());
                         adapter = new newsAdapter(resultsList,getApplicationContext());
+                        adapter.notifyDataSetChanged();
+                        swipeContainer.setRefreshing(false);
                     }catch (Exception e) {
                     }
 
-                    swipeContainer.setRefreshing(false);
-
-                    swipeContainer.setRefreshing(false);
                     runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
 
                             // Stuff that updates the UI
+
                             recyclerView.setAdapter(adapter);
                         }
                     });
 
-                    swipeContainer.setRefreshing(false);
+
+
+
                 }
             }
         });
@@ -213,6 +258,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStart() {
+
         super.onStart();
     }
 }
