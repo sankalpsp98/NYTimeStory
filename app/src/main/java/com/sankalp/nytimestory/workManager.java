@@ -23,11 +23,12 @@ import okhttp3.Response;
 
 public class workManager extends Worker {
 
-    String url =  "https://api.nytimes.com/svc/topstories/v2/sports.json";
+    String url =  dataWire.getUrl();
        private static final String TAG = "MyPeriodicWork";
        results results=null;
 
        List<results> resultsList ;
+    String urlLINK;
     @NonNull
     @Override
     public Result doWork() {
@@ -71,8 +72,13 @@ public class workManager extends Worker {
                             String by = String.valueOf(o.get("byline"));
                             //FOR IMG
                             JSONArray mURLs =o.getJSONArray("multimedia");
-                            JSONObject imgURL =mURLs.getJSONObject(4);
-                            String urlLINK = String.valueOf(imgURL.get("url"));
+                            try {
+                                JSONObject imgURL = mURLs.getJSONObject(4);
+                                urlLINK = String.valueOf(imgURL.get("url"));
+                            }catch (Exception e)
+                            {
+                                urlLINK = null;
+                            }
 
                             results = new results(section,title,abstrac,url,by,urlLINK) ;
                             resultsList.add(results);

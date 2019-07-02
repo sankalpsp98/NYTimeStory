@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
         oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
         recyclerView = findViewById(R.id.recycler);
-        recyclerView.hasFixedSize();
+      //  recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         resultsList = new ArrayList<>();
 
@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity
         if (dataWire.getResultsDataWire().size()==0) {
 
             swipeContainer.setRefreshing(true);
-                    //WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+            WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
 
         }else
         {
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity
                             swipeContainer.setRefreshing(false);
                         }else {
                             WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
                         }
                     }
                 },2000);
@@ -190,7 +192,8 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
 
 
-                //adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+                recyclerView.setAdapter(adapter);
 
             }
         });
@@ -243,13 +246,18 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
+            swipeContainer.setRefreshing(true);
+            dataWire.setUrl("https://api.nytimes.com/svc/topstories/v2/sports.json");
+            WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
+
+
         } else if (id == R.id.nav_gallery) {
+            swipeContainer.setRefreshing(true);
+            dataWire.setUrl("https://api.nytimes.com/svc/topstories/v2/science.json");
 
-        } else if (id == R.id.nav_slideshow) {
+            WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
 
-        } else if (id == R.id.nav_tools) {
-
-        } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
@@ -263,6 +271,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStart() {
+        resultsList=dataWire.getResultsDataWire();
 
 
         super.onStart();

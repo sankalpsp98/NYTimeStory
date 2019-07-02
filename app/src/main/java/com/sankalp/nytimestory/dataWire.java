@@ -4,8 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class dataWire  {
-    private static  String url;
+    private static    String url;
 
+    public static String getUrl() {
+        return url;
+    }
+
+    public static void setUrl(String url) {
+        dataWire.url = url;
+    }
 
     private static List<results> resultsDataWire =new ArrayList<>();
 
@@ -16,11 +23,5 @@ public class dataWire  {
     public static void setResultsDataWire(List<results> resultsDataWire) {
         dataWire.resultsDataWire = resultsDataWire;
     }
-    public static String getUrl() {
-        return url;
-    }
 
-    public static void setUrl(String url) {
-        dataWire.url = url;
-    }
 }

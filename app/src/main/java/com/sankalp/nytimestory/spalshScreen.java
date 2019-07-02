@@ -19,11 +19,13 @@ public class spalshScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spalsh_screen);
+        dataWire.setUrl("https://api.nytimes.com/svc/topstories/v2/science.json");
         LottieAnimationView lottieAnimationView=findViewById(R.id.animation_view);
         lottieAnimationView.loop(true);
         lottieAnimationView.playAnimation();
         oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
         WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
 
         WorkManager.getInstance().getStatusById(oneTimeWorkRequest1.getId()).observe(this, new Observer<WorkStatus>() {
             @Override
