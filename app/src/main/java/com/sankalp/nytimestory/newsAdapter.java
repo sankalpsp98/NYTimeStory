@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URI;
 import java.util.List;
+import java.util.logging.Handler;
 
 public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
 
@@ -39,7 +40,8 @@ public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int i) {
+
         final results  results = NewsList.get(i);
         holder.title.setText(results.getTitle());
         holder.abstrac.setText(results.getAbstrac());
@@ -51,14 +53,20 @@ public class newsAdapter  extends RecyclerView.Adapter<newsAdapter.ViewHolder> {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(results.getUrl()));
                 context.startActivity(intent);
+
             }
         });
 
 
 
         Picasso.with(context).load(results.getMurl()).placeholder(R.mipmap.ic_launcher).fit().centerCrop().into(holder.storyPic);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-
+                notifyItemChanged(i);
+            }
+        });
     }
 
     @Override

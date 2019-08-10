@@ -1,6 +1,7 @@
 package com.sankalp.nytimestory;
 
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 
+import androidx.work.ExistingWorkPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 import androidx.work.WorkStatus;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
                 android.R.color.holo_red_light);
 
         oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
+
         recyclerView = findViewById(R.id.recycler);
       //  recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -85,18 +88,26 @@ public class MainActivity extends AppCompatActivity
         {
             resultsList=dataWire.getResultsDataWire();
 
-            Log.e("works Status ", "finished"+resultsList.size());
+            Log.e("works Status ", "finished first"+resultsList.size());
             adapter = new newsAdapter(resultsList,getApplicationContext());
+
             runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
 
                     // Stuff that updates the UI
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
 
-                    recyclerView.setAdapter(adapter);
+                            recyclerView.setAdapter(adapter);
+                        }
+                    },3000);
+
                 }
             });
+
 
 
         }
@@ -114,14 +125,26 @@ public class MainActivity extends AppCompatActivity
                     public void run() {
                         if (adapter!=null)
                         {
-                            adapter.notifyDataSetChanged();
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    // Stuff that updates the UI
+
+                                    recyclerView.setAdapter(adapter);
+                                }
+                            });
+
                             swipeContainer.setRefreshing(false);
                         }else {
                             WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
 
+
+
                         }
                     }
-                },2000);
+                },4000);
 
             }
         });
@@ -153,10 +176,17 @@ public class MainActivity extends AppCompatActivity
                                 public void run() {
                                     resultsList = dataWire.getResultsDataWire();
 
-                                    Log.e("works Status ", "finished" + resultsList.size());
+                                    Log.e("works Status ", "finished in worker" + resultsList.size());
                                     adapter = new newsAdapter(resultsList, getApplicationContext());
                                     adapter.notifyDataSetChanged();
                                     swipeContainer.setRefreshing(false);
+
+                                }
+                            },4000);
+
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
                                     runOnUiThread(new Runnable() {
 
                                         @Override
@@ -171,6 +201,8 @@ public class MainActivity extends AppCompatActivity
                             },4000);
 
 
+
+
                     }catch (Exception e) {
                     }
 
@@ -182,6 +214,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -247,16 +280,26 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             // Handle the camera action
             swipeContainer.setRefreshing(true);
+            dataWire.getResultsDataWire().clear();
             dataWire.setUrl("https://api.nytimes.com/svc/topstories/v2/sports.json");
-            WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+
+            WorkManager.getInstance().cancelAllWork();
+            WorkManager.getInstance().beginUniqueWork("newWorker", ExistingWorkPolicy.REPLACE,oneTimeWorkRequest1).enqueue();
+
+            // startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            //finish();
 
 
 
         } else if (id == R.id.nav_gallery) {
             swipeContainer.setRefreshing(true);
             dataWire.setUrl("https://api.nytimes.com/svc/topstories/v2/science.json");
+            dataWire.getResultsDataWire().clear();
 
-            WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
+            WorkManager.getInstance().cancelAllWork();
+            WorkManager.getInstance().beginUniqueWork("newWorker", ExistingWorkPolicy.REPLACE,oneTimeWorkRequest1).enqueue();
+           //startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            //finish();
 
 
         } else if (id == R.id.nav_send) {

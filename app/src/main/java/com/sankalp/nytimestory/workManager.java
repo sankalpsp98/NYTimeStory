@@ -29,10 +29,30 @@ public class workManager extends Worker {
 
        List<results> resultsList ;
     String urlLINK;
+    boolean status =false;
+
+
     @NonNull
     @Override
     public Result doWork() {
+        Log.e("url in work",""+dataWire.getUrl());
+
         resultsList = new ArrayList<>() ;
+
+                  Log.e(TAG, "doWork: Work is done.  "+resultsList.size()+" ");
+                  if (getData())
+                  {
+                      return Result.SUCCESS;
+                  }else
+                  {
+                      return Result.RETRY;
+                  }
+
+    }
+
+    public boolean getData()
+    {
+
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(url).newBuilder();
         urlBuilder.addQueryParameter("api-key","A4omrGdE8oSGK7WZdWgjkjesaxsvXiAv");
@@ -82,6 +102,7 @@ public class workManager extends Worker {
 
                             results = new results(section,title,abstrac,url,by,urlLINK) ;
                             resultsList.add(results);
+                            status = true;
 
 
                         }
@@ -104,17 +125,15 @@ public class workManager extends Worker {
                 }
             }
         });
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
 
 
-
-                  Log.e(TAG, "doWork: Work is done.  "+resultsList.size());
-                  if (dataWire.getResultsDataWire().size()!=0)
-                  {
-                      return Result.SUCCESS;
-                  }else
-                  {
-                      return Result.FAILURE;
-                  }
-
+        return status;
     }
+
+
 }

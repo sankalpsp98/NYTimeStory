@@ -13,6 +13,8 @@ import androidx.work.WorkStatus;
 
 import com.airbnb.lottie.LottieAnimationView;
 
+import java.util.concurrent.TimeUnit;
+
 public class spalshScreen extends AppCompatActivity {
     OneTimeWorkRequest oneTimeWorkRequest1;
     @Override
@@ -23,7 +25,7 @@ public class spalshScreen extends AppCompatActivity {
         LottieAnimationView lottieAnimationView=findViewById(R.id.animation_view);
         lottieAnimationView.loop(true);
         lottieAnimationView.playAnimation();
-        oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
+        oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).setInitialDelay(1, TimeUnit.SECONDS).addTag("newsWorker").build();
         WorkManager.getInstance().beginWith(oneTimeWorkRequest1).enqueue();
 
 
@@ -37,7 +39,7 @@ public class spalshScreen extends AppCompatActivity {
                             oneTimeWorkRequest1 = new   OneTimeWorkRequest.Builder(workManager.class).addTag("newsWorker").build();
                             startActivity(new Intent(getApplicationContext(),MainActivity.class));
                         }
-                    },2500);
+                    },1000);
 
                 }
 
